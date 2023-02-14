@@ -15,11 +15,11 @@
 import Toast from 'bootstrap/js/dist/toast'
 
 export default {
-  name: 'Toast',
+  name: 'ToastList',
   props: [
-    'msg',
+    'msg'
   ],
-  mounted() {
+  mounted () {
     const toastEl = this.$refs.toast
     const toast = new Toast(toastEl, {
       delay: 6000

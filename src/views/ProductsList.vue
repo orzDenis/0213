@@ -20,10 +20,10 @@
       <td>{{ item.category }}</td>
       <td>{{ item.title }}</td>
       <td class="text-right">
-        {{ item.origin_price }}
+        {{ $filters.currency(item.origin_price) }}
       </td>
       <td class="text-right">
-        {{ item.price }}
+        {{ $filters.currency(item.price) }}
       </td>
       <td>
         <span class="text-success" v-if="item.is_enabled">啟用</span>
@@ -38,6 +38,7 @@
     </tr>
   </tbody>
 </table>
+<PaginationList :pages="pagination" @emit-pages="getProducts"></PaginationList>
 <PorductModal ref="productModal"
 :product="tempProduct"
 @update-product="updataPordutc"></PorductModal>
@@ -46,6 +47,7 @@
 
 <script>
 import PorductModal from '../components/ProductModel.vue'
+import PaginationList from '@/components/PaginationList.vue'
 import DelProduct from '@/components/DelProduct.vue'
 
 export default {
@@ -66,11 +68,13 @@ export default {
   components: {
     // 新增一個元件
     PorductModal,
-    DelProduct
+    DelProduct,
+    PaginationList
   },
+  inject: ['emitter'],
   methods: {
-    getProducts () {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`
+    getProducts (page = 1) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products/?page=${page}`
       // 啟用loading動畫
       this.isLoading = true
       this.$http.get(api).then((res) => {
@@ -128,10 +132,11 @@ export default {
             title: '更新成功'
           })
         } else {
+          console.log(res)
           this.emitter.emit('push-message', {
             style: 'danger',
             title: '操作失敗！',
-            content: res.data.message.join(' ')
+            content: res.data.message.join('、')
           })
         }
       })

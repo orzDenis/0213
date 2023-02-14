@@ -1,14 +1,18 @@
 <template>
   <NavBar></NavBar>
-  <div class="container-fluid"><router-view/></div>
+  <div class="container-fluid">
+    <ToastList></ToastList>
+    <router-view/></div>
 </template>
 
 <script>
 import emitter from '@/methods/emitter'
+import ToastList from '@/components/ToastMessages.vue'
 import NavBar from '../components/NavBar.vue'
 
 export default {
   components: {
+    ToastList,
     NavBar
   },
   // 給所有元件都使用到使用 provide 傳給內層用
