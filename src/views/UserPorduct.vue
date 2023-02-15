@@ -19,9 +19,10 @@
         <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
         <div class="h5" v-if="product.price">現在只要 {{ product.price }} 元</div>
         <hr>
-        <button type="button" class="btn btn-outline-danger"
-                >
-          加到購物車
+        <button type="button" class="btn btn-outline-danger" @click="addCart(product.id)" :disabled="this.status.loadingItem === product.id" >
+        加到購物車<div v-if="this.status.loadingItem === product.id" class="spinner-grow text-danger spinner-grow-sm" role="status">
+        <span class="visually-hidden">Loading...</span>
+        </div>
         </button>
       </div>
     </div>
@@ -33,7 +34,10 @@ export default {
   data () {
     return {
       product: {},
-      id: ''
+      id: '',
+      status: {
+        loadingItem: '' // 對應品項ID
+      }
     }
   },
   methods: {
@@ -41,9 +45,21 @@ export default {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.id}`
       this.isLoading = true
       this.$http.get(api).then((res) => {
-        // console.log(res)
+        console.log(res)
         this.isLoading = false
         this.product = res.data.product
+      })
+    },
+    addCart (id) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`
+      this.status.loadingItem = id
+      const cart = {
+        product_id: id,
+        qty: 1
+      }
+      this.$http.post(api, { data: cart }).then((res) => {
+        this.status.loadingItem = ''
+        console.log(res)
       })
     }
   },
